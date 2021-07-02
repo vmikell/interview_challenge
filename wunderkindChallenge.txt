@@ -1,0 +1,172 @@
+let numOfItems = document.querySelector( '.number-items' ).innerHTML;
+let subtotal = document.querySelector( '.subtotal' ).innerHTML;
+let imageHTML = document.getElementsByClassName( 'kas-newpb-product-image' );
+
+console.log( imageHTML );
+
+let documentHeight = Math.max(
+  document.body.scrollHeight,
+  document.body.offsetHeight,
+  document.documentElement.clientHeight,
+  document.documentElement.scrollHeight,
+  document.documentElement.offsetHeight
+);
+let scrollPosition = 0;
+let bottom10Percent = documentHeight * 0.9;
+
+createOverlay = () => {
+  let overlayDiv = document.createElement( 'div' );
+  let overlayData = document.createElement( 'div' );
+  overlayDiv.setAttribute( 'id', 'overlay' );
+  overlayData.setAttribute( 'id', 'data' );
+
+  document.body.appendChild( overlayDiv );
+  overlayDiv.appendChild( overlayData );
+
+  styleOverlay( overlayDiv, overlayData );
+};
+
+styleOverlay = ( outerDiv, dataDiv ) => {
+  outerDiv.style.cssText =
+    'text-align: center; position: fixed; width: 100%; height: 100%; top: 0; right: 0; left: 0; bottom: 0; background-color: rgba(0,0,0,0.5); z-index: 2;';
+  dataDiv.className = 'grid-container';
+  dataDiv.style.cssText =
+    'background-color: #fff; width: 500px; height: 500px; display: inline-block; margin: 115px;';
+};
+
+createOverlayHeader = () => {
+  let overlayHeaderContainer = document.createElement( 'div' );
+  overlayHeaderContainer.setAttribute( 'id', 'overlay-header-container' );
+  let overlayHeader = document.createElement( 'span' );
+  overlayHeader.setAttribute( 'id', 'overlay-header' );
+  let overlayData = document.getElementById( 'data' );
+
+  overlayData.appendChild( overlayHeaderContainer );
+  overlayHeaderContainer.appendChild( overlayHeader );
+
+  styleOverlayHeader( overlayHeaderContainer, overlayHeader );
+};
+
+styleOverlayHeader = ( overlayHeaderContainer, overlayHeader ) => {
+  overlayHeaderContainer.style[ 'padding-top' ] = '20px';
+  overlayHeaderContainer.style[ 'padding-bottom' ] = '20px';
+
+  overlayHeader.innerHTML = 'Your cart has ' + numOfItems + ' items!';
+  overlayHeader.style[ 'font-size' ] = '24px';
+};
+
+createImageTable = () => {
+  let imageTableContainer = document.createElement( 'div' );
+  imageTableContainer.setAttribute( 'id', 'image-table-container' );
+
+  let imageTable = document.createElement( 'table' );
+  imageTable.setAttribute( 'id', 'image-table' );
+  imageTable.style.cssText =
+    'display: block; margin-left: auto; margin-right: auto;';
+
+  let tableBody = document.createElement( 'tbody' );
+  tableBody.setAttribute( 'id', 'table-body' );
+  tableBody.style.cssText =
+    'display: block; margin-left: auto; margin-right: auto;';
+
+  let tr = document.createElement( 'tr' );
+  tr.className = 'cart-images';
+  tr.style.cssText = 'display: flex; justify-content: center;';
+
+  let tdImg1 = document.createElement( 'td' );
+  let productImage1 = document.createElement( 'img' );
+  productImage1.setAttribute( 'src', imageHTML[ 0 ].src );
+
+  let tdImg2 = document.createElement( 'td' );
+  let productImage2 = document.createElement( 'img' );
+  productImage2.setAttribute( 'src', imageHTML[ 1 ].src );
+
+  tdImg1.style.padding = '10px';
+  tdImg2.style.padding = '10px';
+
+  tdImg1.appendChild( productImage1 );
+  tdImg2.appendChild( productImage2 );
+  tr.appendChild( tdImg1 );
+  tr.appendChild( tdImg2 );
+  tableBody.appendChild( tr );
+  imageTable.appendChild( tableBody );
+  imageTableContainer.appendChild( imageTable );
+
+  let overlayData = document.getElementById( 'data' );
+
+  overlayData.appendChild( imageTableContainer );
+};
+
+createSubtotalSpan = () => {
+  let subtotalSpan = document.createElement( 'span' );
+  subtotalSpan.setAttribute( 'id', 'subtotal-span' );
+  subtotalSpan.innerHTML = 'Subtotal: ' + subtotal;
+  subtotalSpan.style[ 'font-size' ] = '18px';
+
+  let overlayData = document.getElementById( 'data' );
+  overlayData.appendChild( subtotalSpan );
+};
+
+createCheckOutButton = () => {
+  let cartButtonDiv = document.createElement( 'div' );
+  cartButtonDiv.style[ 'padding-top' ] = '50px';
+
+  let cartButton = document.createElement( 'button' );
+  cartButton.innerHTML = 'Check Out';
+  cartButton.type = 'button';
+  cartButton.onclick = function () {
+    window.location = 'https://www.kohls.com/checkout/shopping_cart.jsp';
+  };
+  cartButton.className = 'primary-button';
+  cartButton.style.cssText =
+    'background-color: #bfd62f; padding: 1rem; font-weight: 900;';
+
+  let overlayData = document.getElementById( 'data' );
+  cartButtonDiv.appendChild( cartButton );
+  overlayData.appendChild( cartButtonDiv );
+};
+
+createContinueShoppingButton = () => {
+  let closeButtonContainer = document.createElement( 'div' );
+  closeButtonContainer.setAttribute( 'id', 'close-button-container' );
+  closeButtonContainer.style[ 'padding-top' ] = '25px';
+
+  let closeButton = document.createElement( 'button' );
+  closeButton.setAttribute( 'id', 'close-button' );
+  closeButton.innerHTML = 'Continue Shopping';
+  closeButton.type = 'button';
+  closeButton.onclick = function () {
+    closeOverlay();
+  };
+  closeButton.style.cssText =
+    'background-color: #bfd62f; padding: 1rem; font-weight: 900;';
+
+  let overlayData = document.getElementById( 'data' );
+  closeButtonContainer.appendChild( closeButton );
+  overlayData.appendChild( closeButtonContainer );
+};
+
+showOverlay = () => {
+  visitor.publishDestinations();
+  createOverlay();
+  createOverlayHeader();
+  createImageTable();
+  createSubtotalSpan();
+  createCheckOutButton();
+  createContinueShoppingButton();
+};
+
+closeOverlay = () => {
+  document.getElementById( 'overlay' ).remove();
+};
+
+window.addEventListener( 'scroll', function ( e ) {
+  newScrollPosition = window.scrollY;
+  if (
+    newScrollPosition > bottom10Percent &&
+    !document.getElementById( 'overlay' )
+  ) {
+    showOverlay();
+  }
+  scrollPosition = newScrollPosition;
+} );
